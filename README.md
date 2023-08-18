@@ -8,7 +8,7 @@ Conservation Mode Switcher
 </div>
 <br>
 
-# Optimus GPU Switcher KDE Plasma Widget
+# Conservation Mode Switcher
 KDE Plasma widget to turn on/off the battery conservation mode in compatible systems.
 
 ## Install
