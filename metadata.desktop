@@ -1,0 +1,23 @@
+[Desktop Entry]
+Name=Conservation Mode Switcher
+Comment=Widget to turn on/off the battery conservation mode in compatible systems..
+Comment[es]=Widget para apagar/encender el modo de conservación de la batería en los sistemas compatibles.
+
+Type=Service
+Icon=battery
+ServiceTypes=Plasma/Applet
+
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/main.qml
+
+X-KDE-PluginInfo-Author=Eniel
+X-KDE-PluginInfo-Email=eniel160990@gmail.com
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Name=conservation-mode-switcher
+X-KDE-PluginInfo-Version=1.0.0
+X-KDE-PluginInfo-License=GPL3
+X-KDE-PluginInfo-Category=Hardware
+X-Plasma-NotificationArea=true
+X-Plasma-NotificationAreaCategory=Hardware
+X-KDE-PluginInfo-EnabledByDefault=true
+
