@@ -4,17 +4,17 @@
   <img alt="Logo" src="./logo.png" height="150px">
 </picture>
 <br>
-Conservation Mode Switcher
+Lenovo® Conservation Mode Switcher
 </div>
 <br>
 
 # Conservation Mode Switcher
-KDE Plasma widget to turn on/off the battery conservation mode in **compatible Lenovo laptops**.
+KDE Plasma widget to turn on/off the battery conservation mode in **compatible Lenovo® laptops**.
 
 ## Install
 
 ### KDE Store
-[Conservation Mode Switcher - KDE Store](TODO)
+[Conservation Mode Switcher - KDE Store](https://store.kde.org/p/2074337/)
 
 ### Manual
 - Download/clone this repo.
