@@ -1,7 +1,7 @@
 <div align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="">
-  <img alt="Logo" src="" height="150px">
+  <source media="(prefers-color-scheme: dark)" srcset="./logo.png">
+  <img alt="Logo" src="./logo.png" height="150px">
 </picture>
 <br>
 Conservation Mode Switcher
