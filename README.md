@@ -10,7 +10,7 @@ Conservation Mode Switcher
 
 # Conservation Mode Switcher
 KDE Plasma widget to turn on/off the battery conservation mode in compatible systems.  
-**Please make sure that your hardware has this feature of limiting the battery charge.**
+**WARNING:** Please make sure that your hardware has this feature of limiting the battery charge.
 
 ## Install
 
