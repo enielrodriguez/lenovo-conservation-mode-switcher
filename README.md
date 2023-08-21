@@ -14,7 +14,7 @@ KDE Plasma widget to turn on/off the battery conservation mode in **compatible L
 ## Install
 
 ### KDE Store
-[Conservation Mode Switcher - KDE Store](https://store.kde.org/p/2074337/)
+[Lenovo® Conservation Mode Switcher - KDE Store](https://store.kde.org/p/2074337/)
 
 ### Manual
 - Download/clone this repo.
