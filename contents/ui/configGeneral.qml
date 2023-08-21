@@ -12,7 +12,7 @@ Kirigami.FormLayout {
 
     TextField {
         id: conservationModeConfigFileField
-        Kirigami.FormData.label: i18n("Conservation Mode config file:")
+        Kirigami.FormData.label: i18n("Conservation Mode config file (if the plugin works don't touch this):")
     }
 
     ComboBox {
