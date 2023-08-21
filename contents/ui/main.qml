@@ -222,11 +222,11 @@ Item {
 
             if (stdout.trim()) {
                 root.conservationModeConfigPath = stdout.trim()
+                queryStatus()
             }else {
                 root.isCompatible = false
+                root.icon = root.icons.error
             }
-
-            queryStatus()
         }
     }
 
