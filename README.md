@@ -25,7 +25,6 @@ KDE Plasma widget to turn on/off the battery conservation mode in **compatible L
 ## Disclaimer
 I'm not a widget or KDE developer, I did this by looking at other widgets, using AI chatbots, consulting documentation, etc. So use it at your own risk.
 Any recommendations and contributions are welcome.
-Idea based on the XCV script.
 
 ## Screenshots
 - Screenshots running on a Lenovo Legion 5 running Fedora 38.
