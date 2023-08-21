@@ -27,4 +27,6 @@ Any recommendations and contributions are welcome.
 ## Screenshots
 - Screenshots running on a Lenovo Legion 5 running Fedora 38.
 
-TODO
+![Screenshot_20230821_123826](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/088db226-af1d-4938-9133-5d5f0d6c2a34)  
+
+![Screenshot_20230821_123839](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/fdfeafce-1e9f-463d-aadd-9d6ccaa85039)
