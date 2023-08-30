@@ -13,8 +13,6 @@ Item {
 
     property string conservationModeConfigPath
 
-    readonly property string const_ZERO_TIMEOUT_NOTIFICATION: " -t 0"
-
     readonly property var const_COMMANDS: ({
         "query": "cat " + root.conservationModeConfigPath,
         "on": "echo 1 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null",
@@ -253,7 +251,7 @@ Item {
         setStatusDataSource.exec(const_COMMANDS[root.desiredStatus])
     }
 
-    function showNotification(iconURL: string, message: string, title = i18n("Conservation Mode Switcher"), options = const_ZERO_TIMEOUT_NOTIFICATION){
+    function showNotification(iconURL: string, message: string, title = i18n("Conservation Mode Switcher"), options = ""){
         sendNotification.exec(const_COMMANDS.sendNotification(title, message, iconURL, options))
     }
 
