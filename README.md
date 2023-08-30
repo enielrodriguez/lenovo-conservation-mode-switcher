@@ -29,10 +29,9 @@ Any recommendations and contributions are welcome.
 ## Screenshots
 - Screenshots running on a Lenovo Legion 5 running Fedora 38.
 
-![Screenshot_20230830_161221](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/4588ce5d-6db1-425f-8443-5f5324f41fda)  
+![Screenshot_20230830_161504](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/28f8f0ce-3e24-4493-a97a-3cbf500b750b)
 
-![Screenshot_20230830_161228](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/e8ef1be6-9e57-4670-a79a-7e5b83cf809d)
-
+![Screenshot_20230830_161509](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/debdc737-594f-4d5a-8fac-b74d6a6c6e6a)
 
 ![Screenshot_20230821_125147](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/72a803c7-1804-4f5d-8c92-35db9014bba0)  
 *Define the configuration file path only if the plugin fails to find it automatically.*
