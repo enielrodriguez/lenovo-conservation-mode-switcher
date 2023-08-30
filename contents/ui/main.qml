@@ -35,7 +35,7 @@ Item {
     property string currentStatus: "off"
     property bool isCompatible: false
 
-    property string desiredStatus
+    property string desiredStatus: "off"
     property bool loading: false
 
     property string icon: root.icons[root.currentStatus]
@@ -169,7 +169,7 @@ Item {
                 showNotification(root.icons.error, stderr, stderr)
             } else {
                 var status = stdout.trim()
-                root.currentStatus = status === "1"? "on" : "off"
+                root.currentStatus = root.desiredStatus = status === "1"? "on" : "off"
                 root.isCompatible = true
                 root.loading = false
             }
@@ -181,6 +181,12 @@ Item {
         target: setStatusDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
             root.loading = false
+
+            if(exitCode === 127){
+                showNotification(root.icons.error, i18n("Root privileges are required."))
+                root.desiredStatus = root.currentStatus
+                return
+            }
 
             if (stderr) {
                 showNotification(root.icons.error, stderr, stdout)
@@ -219,6 +225,7 @@ Item {
         target: findConservationModeConfigFileDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
             // We assume that there can only be a single conservation_mode file.
+            // TODO: handle two conservation_mode files for dual battery systems (if that exists in Lenovo).
 
             if (stdout.trim()) {
                 root.conservationModeConfigPath = stdout.trim()
@@ -237,14 +244,13 @@ Item {
         queryStatusDataSource.exec(const_COMMANDS.query)
     }
 
-    // status = "on"|"off"
-    function switchStatus(status: string) {
-        root.desiredStatus = status
+
+    function switchStatus() {
         root.loading = true
 
-        showNotification(root.icons[status], i18n("Switching status to %1.", status.toUpperCase()))
+        showNotification(root.icons[root.desiredStatus], i18n("Switching status to %1.", root.desiredStatus.toUpperCase()))
 
-        setStatusDataSource.exec(const_COMMANDS[status])
+        setStatusDataSource.exec(const_COMMANDS[root.desiredStatus])
     }
 
     function showNotification(iconURL: string, message: string, title = i18n("Conservation Mode Switcher"), options = const_ZERO_TIMEOUT_NOTIFICATION){
@@ -313,9 +319,12 @@ Item {
                 Layout.alignment: Qt.AlignCenter
 
                 enabled: !root.loading && root.isCompatible
-                checked: root.currentStatus === "on"
-                onClicked: {
-                    switchStatus(checked ? "on" : "off")
+                checked: root.desiredStatus === "on"
+                onCheckedChanged: {
+                    root.desiredStatus = checked ? "on" : "off"
+                    if(root.desiredStatus !== root.currentStatus){
+                        switchStatus()
+                    }
                 }
             }
 
