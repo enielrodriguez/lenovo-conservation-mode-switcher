@@ -5,163 +5,110 @@ import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
-
 Item {
     id: root
 
+    // Path to the pkexec command-line tool
     property string pkexecPath: "/usr/bin/pkexec"
 
+    // Path to the conservation mode configuration file
     property string conservationModeConfigPath
 
-    readonly property var const_COMMANDS: ({
-        "query": "cat " + root.conservationModeConfigPath,
-        "on": "echo 1 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null",
-        "off": "echo 0 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null",
-        "findConservationModeConfigFile": "find /sys -name \"conservation_mode\"",
-        "findNotificationTool": "find /usr -type f -executable \\( -name \"notify-send\" -o -name \"zenity\" \\)",
-        // defined in findNotificationTool Connection
-        "sendNotification": () => ""
-    })
-
+    // Icons for different status: "on," "off," and "error"
     property var icons: ({
         "on": Qt.resolvedUrl("./image/on.png"),
         "off": Qt.resolvedUrl("./image/off.png"),
         "error": Qt.resolvedUrl("./image/error.png")
     })
 
-    // This values can change after the execution of onCompleted().
+    // The current status of the conservation mode ("on" or "off")
     property string currentStatus: "off"
+
+    // A flag indicating whether the widget is compatible with the system
     property bool isCompatible: false
 
+    // The notification tool to use (e.g., "zenity" or "notify-send")
+    property string notificationTool: ""
+
+    // The desired status for the conservation mode ("on" or "off")
     property string desiredStatus: "off"
+
+    // A flag indicating if an operation is in progress
     property bool loading: false
 
+    // The currently displayed icon
     property string icon: root.icons[root.currentStatus]
 
+    // Set the icon for the Plasmoid
     Plasmoid.icon: root.icon
 
+    // Connect to Plasmoid configuration
     Connections {
         target: Plasmoid.configuration
     }
 
+    // Executed when the component is fully initialized
     Component.onCompleted: {
         findNotificationTool()
         findConservationModeConfigFile()
     }
 
-    PlasmaCore.DataSource {
+    // CustomDataSource for querying the current status
+    CustomDataSource {
         id: queryStatusDataSource
-        engine: "executable"
-        connectedSources: []
-
-        onNewData: {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            var stderr = data["stderr"]
-
-            exited(exitCode, exitStatus, stdout, stderr)
-            disconnectSource(sourceName)
-        }
-
-        function exec(cmd) {
-            connectSource(cmd)
-        }
-
-        signal exited(int exitCode, int exitStatus, string stdout, string stderr)
+        command: "cat " + root.conservationModeConfigPath
     }
 
-
-    PlasmaCore.DataSource {
+    // CustomDataSource for setting the conservation mode status
+    CustomDataSource {
         id: setStatusDataSource
-        engine: "executable"
-        connectedSources: []
 
-        onNewData: {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            var stderr = data["stderr"]
+        // Dynamically set in switchStatus(). Set a default value to avoid errors at startup.
+        property string status: "off"
 
-            exited(exitCode, exitStatus, stdout, stderr)
-            disconnectSource(sourceName)
+        // Commands to enable or disable conservation mode
+        property var cmds: {
+            "on": "echo 1 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null",
+            "off": "echo 0 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null"
         }
-
-        function exec(cmd) {
-            connectSource(cmd)
-        }
-
-        signal exited(int exitCode, int exitStatus, string stdout, string stderr)
+        command: cmds[status]
     }
 
-
-    PlasmaCore.DataSource {
+    // CustomDataSource for finding the notification tool
+    CustomDataSource {
         id: findNotificationToolDataSource
-        engine: "executable"
-        connectedSources: []
-
-        onNewData: {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            // stderr output can contain "permission denied" errors
-            var stderr = data["stderr"]
-
-            exited(exitCode, exitStatus, stdout, stderr)
-            disconnectSource(sourceName)
-        }
-
-        function exec(cmd) {
-            connectSource(cmd)
-        }
-
-        signal exited(int exitCode, int exitStatus, string stdout, string stderr)
+        command: "find /usr -type f -executable \\( -name \"notify-send\" -o -name \"zenity\" \\)"
     }
 
-
-    PlasmaCore.DataSource {
+    // CustomDataSource for finding the conservation mode configuration file
+    CustomDataSource {
         id: findConservationModeConfigFileDataSource
-        engine: "executable"
-        connectedSources: []
-
-        onNewData: {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            // stderr output can contain "permission denied" errors
-            var stderr = data["stderr"]
-
-            exited(exitCode, exitStatus, stdout, stderr)
-            disconnectSource(sourceName)
-        }
-
-        function exec(cmd) {
-            connectSource(cmd)
-        }
-
-        signal exited(int exitCode, int exitStatus, string stdout, string stderr)
+        command: "find /sys -name \"conservation_mode\""
     }
 
-
-    PlasmaCore.DataSource {
+    // CustomDataSource for sending notifications
+    CustomDataSource {
         id: sendNotification
-        engine: "executable"
-        connectedSources: []
 
-        onNewData: {
-            disconnectSource(sourceName)
-        }
+        // Dynamically set in showNotification(). Set a default value to avoid errors at startup.
+        property string tool: "notify-send"
 
-        function exec(cmd) {
-            connectSource(cmd)
+        property string iconURL: ""
+        property string title: ""
+        property string message: ""
+        property string options: ""
+
+        property var cmds: {
+            "notify-send": `notify-send -i ${iconURL} '${title}' '${message}' ${options}`,
+            "zenity": `zenity --notification --text='${title}\\n${message}' ${options}`
         }
+        command: cmds[tool]
     }
 
-
+    // Connection for handling the queryStatusDataSource
     Connections {
         target: queryStatusDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
-
             if (stderr) {
                 root.icon = root.icons.error
                 showNotification(root.icons.error, stderr, stderr)
@@ -174,7 +121,7 @@ Item {
         }
     }
 
-
+    // Connection for handling the setStatusDataSource
     Connections {
         target: setStatusDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
@@ -195,78 +142,84 @@ Item {
         }
     }
 
-
+    // Connection for finding the notification tool
     Connections {
         target: findNotificationToolDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
-
             if (stdout) {
                 // Many Linux distros have two notification tools
                 var paths = stdout.trim().split("\n")
                 var path1 = paths[0]
                 var path2 = paths[1]
 
-                // prefer notify-send because it allows to use icon, zenity v3.44.0 does not accept icon option
+                // Prefer notify-send because it allows using an icon; zenity v3.44.0 does not accept an icon option
                 if (path1 && path1.trim().endsWith("notify-send")) {
-                    const_COMMANDS.sendNotification = (title, message, iconURL, options) => path1.trim() + " -i " + iconURL + " '" + title + "' '" + message + "'" + options
-                }if (path2 && path2.trim().endsWith("notify-send")) {
-                    const_COMMANDS.sendNotification = (title, message, iconURL, options) => path2.trim() + " -i " + iconURL + " '" + title + "' '" + message + "'" + options
-                }else if (path1 && path1.trim().endsWith("zenity")) {
-                    const_COMMANDS.sendNotification = (title, message, iconURL, options) => path1.trim() + " --notification --text='" + title + "\\n" + message + "'"
+                    root.notificationTool = "notify-send"
+                } else if (path2 && path2.trim().endsWith("notify-send")) {
+                    root.notificationTool = "notify-send"
+                } else if (path1 && path1.trim().endsWith("zenity")) {
+                    root.notificationTool = "zenity"
+                } else {
+                    console.warn("No compatible notification tool found.")
                 }
             }
         }
     }
 
-
+    // Connection for finding the conservation mode configuration file
     Connections {
         target: findConservationModeConfigFileDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
-            // We assume that there can only be a single conservation_mode file.
-            // TODO: handle two conservation_mode files for dual battery systems (if that exists in Lenovo).
-
             if (stdout.trim()) {
                 root.conservationModeConfigPath = stdout.trim()
                 queryStatus()
-            }else {
+            } else {
                 root.isCompatible = false
                 root.icon = root.icons.error
             }
         }
     }
 
-
     // Get the current status
     function queryStatus() {
         root.loading = true
-        queryStatusDataSource.exec(const_COMMANDS.query)
+        queryStatusDataSource.exec()
     }
 
-
+    // Switch the conservation mode status
     function switchStatus() {
         root.loading = true
-
         showNotification(root.icons[root.desiredStatus], i18n("Switching status to %1.", root.desiredStatus.toUpperCase()))
 
-        setStatusDataSource.exec(const_COMMANDS[root.desiredStatus])
+        setStatusDataSource.status = root.desiredStatus
+        setStatusDataSource.exec()
     }
 
+    // Show a notification with an icon, message, title, and options
     function showNotification(iconURL: string, message: string, title = i18n("Conservation Mode Switcher"), options = ""){
-        sendNotification.exec(const_COMMANDS.sendNotification(title, message, iconURL, options))
+        sendNotification.tool = root.notificationTool
+
+        sendNotification.iconURL = iconURL
+        sendNotification.title = message
+        sendNotification.message = title
+        sendNotification.options = options
+
+        sendNotification.exec()
     }
 
+    // Find the notification tool
     function findNotificationTool() {
-        findNotificationToolDataSource.exec(const_COMMANDS.findNotificationTool)
+        findNotificationToolDataSource.exec()
     }
 
+    // Find the conservation mode configuration file
     function findConservationModeConfigFile() {
-        // Check if the user defined the file path manually and use it if he did.
-        if(Plasmoid.configuration.conservationModeConfigFile){
+        // Check if the user defined the file path manually and use it if they did.
+        if (Plasmoid.configuration.conservationModeConfigFile){
             root.conservationModeConfigPath = Plasmoid.configuration.conservationModeConfigFile
-        }else{
-            findConservationModeConfigFileDataSource.exec(const_COMMANDS.findConservationModeConfigFile)
+        } else {
+            findConservationModeConfigFileDataSource.exec()
         }
-
     }
 
     Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
@@ -306,13 +259,13 @@ Item {
                 fillMode: Image.PreserveAspectFit
             }
 
-
+            // Label displaying the current status
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignCenter
                 text: root.isCompatible ? i18n("Conservation Mode is %1.", root.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
             }
 
-
+            // Switch to toggle the conservation mode status
             PlasmaComponents3.Switch {
                 Layout.alignment: Qt.AlignCenter
 
@@ -320,21 +273,22 @@ Item {
                 checked: root.desiredStatus === "on"
                 onCheckedChanged: {
                     root.desiredStatus = checked ? "on" : "off"
-                    if(root.desiredStatus !== root.currentStatus){
+                    if (root.desiredStatus !== root.currentStatus){
                         switchStatus()
                     }
                 }
             }
 
+            // Busy indicator when an operation is in progress
             BusyIndicator {
                 id: loadingIndicator
                 Layout.alignment: Qt.AlignCenter
                 running: root.loading
             }
-
         }
     }
 
+    // Tooltip text for the Plasmoid
     Plasmoid.toolTipMainText: i18n("Switch Conservation Mode.")
     Plasmoid.toolTipSubText: root.isCompatible ? i18n("Conservation Mode is %1.", root.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
 }
