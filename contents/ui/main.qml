@@ -68,8 +68,8 @@ Item {
 
         // Commands to enable or disable conservation mode
         property var cmds: {
-            "on": "echo 1 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null",
-            "off": "echo 0 | " + root.pkexecPath + " tee " + root.conservationModeConfigPath + " 1>/dev/null"
+            "on": `echo 1 | ${root.pkexecPath} tee ${root.conservationModeConfigPath} 1>/dev/null`,
+            "off": `echo 0 | ${root.pkexecPath} tee ${root.conservationModeConfigPath} 1>/dev/null`
         }
         command: cmds[status]
     }
