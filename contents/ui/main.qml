@@ -147,7 +147,7 @@ Item {
         target: findNotificationToolDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
             if (stdout) {
-                // Many Linux distros have two notification tools
+                // Many Linux distros have two notification tools: notify-send and zenity
                 var paths = stdout.trim().split("\n")
                 var path1 = paths[0]
                 var path2 = paths[1]
@@ -200,8 +200,8 @@ Item {
         sendNotification.tool = root.notificationTool
 
         sendNotification.iconURL = iconURL
-        sendNotification.title = message
-        sendNotification.message = title
+        sendNotification.title = title
+        sendNotification.message = message
         sendNotification.options = options
 
         sendNotification.exec()
