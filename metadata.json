@@ -1,0 +1,27 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "eniel160990@gmail.com",
+                "Name": "Eniel"
+            }
+        ],
+        "Category": "Hardware",
+        "Description": "Widget to turn on/off the battery conservation mode in compatible Lenovo laptops.",
+        "Description[es]": "Widget para apagar/encender el modo de conservación de la batería en laptops Lenovo compatibles.",
+        "EnabledByDefault": true,
+        "Icon": "battery",
+        "Id": "lenovo-conservation-mode-switcher",
+        "License": "GPL3",
+        "Name": "Lenovo Conservation Mode Switcher",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "1.1.2",
+        "Website": ""
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml",
+    "X-Plasma-NotificationArea": "true",
+    "X-Plasma-NotificationAreaCategory": "Hardware"
+}
