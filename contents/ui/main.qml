@@ -100,7 +100,7 @@ Item {
 
         property var cmds: {
             "notify-send": `notify-send -i ${iconURL} '${title}' '${message}' ${options}`,
-            "zenity": `zenity --notification --text='${title}\\n${message}' ${options}`
+            "zenity": `zenity --notification --text='${title}\\n${message}'`
         }
         command: cmds[tool]
     }
