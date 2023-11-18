@@ -42,11 +42,6 @@ Item {
     // Set the icon for the Plasmoid
     Plasmoid.icon: root.icon
 
-    // Connect to Plasmoid configuration
-    Connections {
-        target: Plasmoid.configuration
-    }
-
     // Executed when the component is fully initialized
     Component.onCompleted: {
         findNotificationTool()
@@ -215,8 +210,8 @@ Item {
     // Find the conservation mode configuration file
     function findConservationModeConfigFile() {
         // Check if the user defined the file path manually and use it if they did.
-        if (Plasmoid.configuration.conservationModeConfigFile){
-            root.conservationModeConfigPath = Plasmoid.configuration.conservationModeConfigFile
+        if (plasmoid.configuration.conservationModeConfigFile){
+            root.conservationModeConfigPath = plasmoid.configuration.conservationModeConfigFile
         } else {
             findConservationModeConfigFileDataSource.exec()
         }
@@ -226,8 +221,8 @@ Item {
 
     Plasmoid.compactRepresentation: Item {
         PlasmaCore.IconItem {
-            height: Plasmoid.configuration.iconSize
-            width: Plasmoid.configuration.iconSize
+            height: plasmoid.configuration.iconSize
+            width: plasmoid.configuration.iconSize
             anchors.centerIn: parent
 
             source: root.icon
