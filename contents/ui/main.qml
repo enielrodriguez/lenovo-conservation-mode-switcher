@@ -9,7 +9,7 @@ Item {
     id: root
 
     // Path to the pkexec command-line tool
-    property string pkexecPath: "/usr/bin/pkexec"
+    property string pkexecPath: plasmoid.configuration.needSudo ? "/usr/bin/pkexec" : "/usr/bin/sudo"
 
     // Path to the conservation mode configuration file
     property string conservationModeConfigPath

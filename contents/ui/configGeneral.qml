@@ -9,6 +9,7 @@ Kirigami.FormLayout {
 
     property alias cfg_conservationModeConfigFile: conservationModeConfigFileField.text
     property alias cfg_iconSize: iconSizeComboBox.currentValue
+    property alias cfg_needSudo: needSudoField.checked
 
     TextField {
         id: conservationModeConfigFileField
