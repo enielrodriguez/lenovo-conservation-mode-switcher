@@ -167,6 +167,7 @@ Item {
         function onExited(exitCode, exitStatus, stdout, stderr){
             if (stdout.trim()) {
                 root.conservationModeConfigPath = stdout.trim()
+                plasmoid.configuration.conservationModeConfigFile = root.conservationModeConfigPath
                 queryStatus()
             } else {
                 root.isCompatible = false
