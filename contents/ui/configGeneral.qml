@@ -22,10 +22,27 @@ Kirigami.FormLayout {
         anchors.top: conservationModeConfigFileField.bottom
         anchors.topMargin: 15
     }
+
     Label {
+        id: noteDisableSudo
         text: "NOTE: Uncheck if you can run 'sudo tee' without entering the root password."
         anchors.top: needSudoField.bottom
     }
+
+    Label {
+        id: labelCmdDisableSudo
+        text: "TIP: Command to allow execution without root password:"
+        anchors.top: noteDisableSudo.bottom
+    }
+
+    TextField {
+        text: "echo \"%sudo ALL=(ALL) NOPASSWD: /usr/bin/tee " + configGeneral.cfg_conservationModeConfigFile + "\" | sudo tee /etc/sudoers.d/conservation_mode"
+        wrapMode: Text.Wrap
+        readOnly: true
+        Layout.fillWidth: true
+        anchors.top: labelCmdDisableSudo.bottom
+    }
+
 
     ComboBox {
         id: iconSizeComboBox
