@@ -38,5 +38,5 @@ Any recommendations and contributions are welcome.
 
 ![Screenshot_20230830_161509](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/debdc737-594f-4d5a-8fac-b74d6a6c6e6a)
 
-![Screenshot_20230821_125147](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/72a803c7-1804-4f5d-8c92-35db9014bba0)  
+![Screenshot_20231231_125452](https://github.com/enielrodriguez/lenovo-conservation-mode-switcher/assets/31964610/97fc50ec-565a-489b-a6b6-f3f55ff4226d)  
 *Define the configuration file path only if the plugin fails to find it automatically.*
