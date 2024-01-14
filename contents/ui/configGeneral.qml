@@ -36,7 +36,7 @@ Kirigami.FormLayout {
     }
 
     TextField {
-        text: "echo \"%sudo ALL=(ALL) NOPASSWD: /usr/bin/tee " + configGeneral.cfg_conservationModeConfigFile + "\" | sudo tee /etc/sudoers.d/conservation_mode"
+        text: "echo \"%your_group ALL=(ALL) NOPASSWD: /usr/bin/tee " + configGeneral.cfg_conservationModeConfigFile.replace(/:/g, "\\:") + "\" | sudo tee /etc/sudoers.d/conservation_mode"
         wrapMode: Text.Wrap
         readOnly: true
         Layout.fillWidth: true
