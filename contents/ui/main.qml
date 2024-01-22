@@ -12,7 +12,7 @@ Item {
     property string pkexecPath: plasmoid.configuration.needSudo ? "/usr/bin/pkexec" : "/usr/bin/sudo"
 
     // Path to the conservation mode configuration file
-    property string conservationModeConfigPath
+    property string conservationModeConfigPath: plasmoid.configuration.conservationModeConfigFile
 
     // Icons for different status: "on," "off," and "error"
     property var icons: ({
@@ -25,7 +25,7 @@ Item {
     property string currentStatus: "off"
 
     // A flag indicating whether the widget is compatible with the system
-    property bool isCompatible: false
+    property bool isCompatible: true
 
     // The notification tool to use (e.g., "zenity" or "notify-send")
     property string notificationTool: ""
@@ -48,10 +48,18 @@ Item {
         findConservationModeConfigFile()
     }
 
+    onConservationModeConfigPathChanged: {
+        if(root.conservationModeConfigPath) {
+            queryStatusDataSource.command = "cat " + root.conservationModeConfigPath
+            queryStatus()
+        }else if(isCompatible) {
+            findConservationModeConfigFile()
+        }
+    }
+
     // CustomDataSource for querying the current status
     CustomDataSource {
         id: queryStatusDataSource
-        command: "cat " + root.conservationModeConfigPath
     }
 
     // CustomDataSource for setting the conservation mode status
@@ -109,10 +117,9 @@ Item {
                 showNotification(root.icons.error, stderr, stderr)
             } else {
                 var status = stdout.trim()
-                root.currentStatus = root.desiredStatus = status === "1"? "on" : "off"
-                root.isCompatible = true
-                root.loading = false
+                root.currentStatus = root.desiredStatus = status === "1"? "on" : "off"                
             }
+            root.loading = false
         }
     }
 
@@ -166,9 +173,7 @@ Item {
         target: findConservationModeConfigFileDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
             if (stdout.trim()) {
-                root.conservationModeConfigPath = stdout.trim()
-                plasmoid.configuration.conservationModeConfigFile = root.conservationModeConfigPath
-                queryStatus()
+                plasmoid.configuration.conservationModeConfigFile = stdout.trim()
             } else {
                 root.isCompatible = false
                 root.icon = root.icons.error
