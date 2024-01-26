@@ -11,6 +11,7 @@ Kirigami.FormLayout {
     property alias cfg_iconSize: iconSizeComboBox.currentValue
     property alias cfg_needSudo: needSudoField.checked
 
+
     TextField {
         id: conservationModeConfigFileField
         Kirigami.FormData.label: i18n("Conservation Mode config file (if the plugin works don't touch this):")

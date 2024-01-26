@@ -5,6 +5,15 @@
         <entry name="conservationModeConfigFile" type="String">
             <default/>
         </entry>
+        <entry name="currentStatus" type="String">
+            <default/>
+        </entry>
+        <entry name="notificationToolPath" type="String">
+            <default/>
+        </entry>
+        <entry name="isCompatible" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="iconSize" type="Int">
             <default>22</default>
         </entry>

@@ -11,24 +11,12 @@ Item {
     // Path to the pkexec command-line tool
     property string pkexecPath: plasmoid.configuration.needSudo ? "/usr/bin/pkexec" : "/usr/bin/sudo"
 
-    // Path to the conservation mode configuration file
-    property string conservationModeConfigPath: plasmoid.configuration.conservationModeConfigFile
-
     // Icons for different status: "on," "off," and "error"
     property var icons: ({
         "on": Qt.resolvedUrl("./image/on.png"),
-        "off": Qt.resolvedUrl("./image/off.png"),
-        "error": Qt.resolvedUrl("./image/error.png")
+                         "off": Qt.resolvedUrl("./image/off.png"),
+                         "error": Qt.resolvedUrl("./image/error.png")
     })
-
-    // The current status of the conservation mode ("on" or "off")
-    property string currentStatus: "off"
-
-    // A flag indicating whether the widget is compatible with the system
-    property bool isCompatible: true
-
-    // The notification tool to use (e.g., "zenity" or "notify-send")
-    property string notificationTool: ""
 
     // The desired status for the conservation mode ("on" or "off")
     property string desiredStatus: "off"
@@ -37,7 +25,7 @@ Item {
     property bool loading: false
 
     // The currently displayed icon
-    property string icon: root.icons[root.currentStatus]
+    property string icon: root.icons[plasmoid.configuration.currentStatus]
 
     // Set the icon for the Plasmoid
     Plasmoid.icon: root.icon
@@ -45,21 +33,12 @@ Item {
     // Executed when the component is fully initialized
     Component.onCompleted: {
         findNotificationTool()
-        findConservationModeConfigFile()
-    }
-
-    onConservationModeConfigPathChanged: {
-        if(root.conservationModeConfigPath) {
-            queryStatusDataSource.command = "cat " + root.conservationModeConfigPath
-            queryStatus()
-        }else if(isCompatible) {
-            findConservationModeConfigFile()
-        }
     }
 
     // CustomDataSource for querying the current status
     CustomDataSource {
         id: queryStatusDataSource
+        command: "cat " + plasmoid.configuration.conservationModeConfigFile
     }
 
     // CustomDataSource for setting the conservation mode status
@@ -71,8 +50,8 @@ Item {
 
         // Commands to enable or disable conservation mode
         property var cmds: {
-            "on": `echo 1 | ${root.pkexecPath} tee ${root.conservationModeConfigPath} 1>/dev/null`,
-            "off": `echo 0 | ${root.pkexecPath} tee ${root.conservationModeConfigPath} 1>/dev/null`
+            "on": `echo 1 | ${root.pkexecPath} tee ${plasmoid.configuration.conservationModeConfigFile} 1>/dev/null`,
+            "off": `echo 0 | ${root.pkexecPath} tee ${plasmoid.configuration.conservationModeConfigFile} 1>/dev/null`
         }
         command: cmds[status]
     }
@@ -112,14 +91,14 @@ Item {
     Connections {
         target: queryStatusDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
+            root.loading = false
             if (stderr) {
                 root.icon = root.icons.error
                 showNotification(root.icons.error, stderr, stderr)
             } else {
                 var status = stdout.trim()
-                root.currentStatus = root.desiredStatus = status === "1"? "on" : "off"                
+                plasmoid.configuration.currentStatus = root.desiredStatus = status === "1"? "on" : "off"
             }
-            root.loading = false
         }
     }
 
@@ -131,15 +110,15 @@ Item {
 
             if(exitCode === 127){
                 showNotification(root.icons.error, i18n("Root privileges are required."))
-                root.desiredStatus = root.currentStatus
+                root.desiredStatus = plasmoid.configuration.currentStatus
                 return
             }
 
             if (stderr) {
                 showNotification(root.icons.error, stderr, stdout)
             } else {
-                root.currentStatus = root.desiredStatus
-                showNotification(root.icons[root.currentStatus], i18n("Status switched to %1.", root.currentStatus.toUpperCase()))
+                plasmoid.configuration.currentStatus = root.desiredStatus
+                showNotification(root.icons[plasmoid.configuration.currentStatus], i18n("Status switched to %1.", plasmoid.configuration.currentStatus.toUpperCase()))
             }
         }
     }
@@ -156,15 +135,17 @@ Item {
 
                 // Prefer notify-send because it allows using an icon; zenity v3.44.0 does not accept an icon option
                 if (path1 && path1.trim().endsWith("notify-send")) {
-                    root.notificationTool = "notify-send"
+                    plasmoid.configuration.notificationToolPath = "notify-send"
                 } else if (path2 && path2.trim().endsWith("notify-send")) {
-                    root.notificationTool = "notify-send"
+                    plasmoid.configuration.notificationToolPath = "notify-send"
                 } else if (path1 && path1.trim().endsWith("zenity")) {
-                    root.notificationTool = "zenity"
+                    plasmoid.configuration.notificationToolPath = "zenity"
                 } else {
                     console.warn("No compatible notification tool found.")
                 }
             }
+
+            findConservationModeConfigFile()
         }
     }
 
@@ -172,10 +153,13 @@ Item {
     Connections {
         target: findConservationModeConfigFileDataSource
         function onExited(exitCode, exitStatus, stdout, stderr){
+            root.loading = false
             if (stdout.trim()) {
                 plasmoid.configuration.conservationModeConfigFile = stdout.trim()
+                plasmoid.configuration.isCompatible = true
+                queryStatus()
             } else {
-                root.isCompatible = false
+                plasmoid.configuration.isCompatible = false
                 root.icon = root.icons.error
             }
         }
@@ -198,28 +182,36 @@ Item {
 
     // Show a notification with an icon, message, title, and options
     function showNotification(iconURL: string, message: string, title = i18n("Conservation Mode Switcher"), options = ""){
-        sendNotification.tool = root.notificationTool
+        if (plasmoid.configuration.notificationToolPath) {
+            sendNotification.tool = plasmoid.configuration.notificationToolPath
 
-        sendNotification.iconURL = iconURL
-        sendNotification.title = title
-        sendNotification.message = message
-        sendNotification.options = options
+            sendNotification.iconURL = iconURL
+            sendNotification.title = title
+            sendNotification.message = message
+            sendNotification.options = options
 
-        sendNotification.exec()
+            sendNotification.exec()
+        } else {
+            console.warn(title + ": " + message)
+        }
     }
 
     // Find the notification tool
     function findNotificationTool() {
-        findNotificationToolDataSource.exec()
+        if(!plasmoid.configuration.notificationToolPath){
+            findNotificationToolDataSource.exec()
+        } else {
+            findConservationModeConfigFile()
+        }
     }
 
     // Find the conservation mode configuration file
     function findConservationModeConfigFile() {
-        // Check if the user defined the file path manually and use it if they did.
-        if (plasmoid.configuration.conservationModeConfigFile){
-            root.conservationModeConfigPath = plasmoid.configuration.conservationModeConfigFile
-        } else {
+        if (!plasmoid.configuration.conservationModeConfigFile || !plasmoid.configuration.isCompatible){
+            root.loading = true
             findConservationModeConfigFileDataSource.exec()
+        } else {
+            queryStatus()
         }
     }
 
@@ -263,18 +255,18 @@ Item {
             // Label displaying the current status
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignCenter
-                text: root.isCompatible ? i18n("Conservation Mode is %1.", root.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
+                text: plasmoid.configuration.isCompatible ? i18n("Conservation Mode is %1.", plasmoid.configuration.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
             }
 
             // Switch to toggle the conservation mode status
             PlasmaComponents3.Switch {
                 Layout.alignment: Qt.AlignCenter
 
-                enabled: !root.loading && root.isCompatible
+                enabled: !root.loading && plasmoid.configuration.isCompatible
                 checked: root.desiredStatus === "on"
                 onCheckedChanged: {
                     root.desiredStatus = checked ? "on" : "off"
-                    if (root.desiredStatus !== root.currentStatus){
+                    if (root.desiredStatus !== plasmoid.configuration.currentStatus){
                         switchStatus()
                     }
                 }
@@ -291,5 +283,5 @@ Item {
 
     // Tooltip text for the Plasmoid
     Plasmoid.toolTipMainText: i18n("Switch Conservation Mode.")
-    Plasmoid.toolTipSubText: root.isCompatible ? i18n("Conservation Mode is %1.", root.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
+    Plasmoid.toolTipSubText: plasmoid.configuration.isCompatible ? i18n("Conservation Mode is %1.", plasmoid.configuration.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
 }
