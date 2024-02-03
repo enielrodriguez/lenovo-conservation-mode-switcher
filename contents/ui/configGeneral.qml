@@ -11,7 +11,6 @@ Kirigami.FormLayout {
     property alias cfg_iconSize: iconSizeComboBox.currentValue
     property alias cfg_needSudo: needSudoField.checked
 
-
     TextField {
         id: conservationModeConfigFileField
         Kirigami.FormData.label: i18n("Conservation Mode config file (if the plugin works don't touch this):")
@@ -22,6 +21,9 @@ Kirigami.FormLayout {
         text: i18n("I need sudo")
         anchors.top: conservationModeConfigFileField.bottom
         anchors.topMargin: 15
+        onCheckedChanged: {
+            plasmoid.configuration.elevatedPivilegesTool = checked ? "/usr/bin/pkexec" : "/usr/bin/sudo";
+        }
     }
 
     Label {

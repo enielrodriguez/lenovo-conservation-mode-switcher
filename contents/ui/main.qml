@@ -8,9 +8,6 @@ import org.kde.plasma.plasmoid 2.0
 Item {
     id: root
 
-    // Path to the pkexec command-line tool
-    property string pkexecPath: plasmoid.configuration.needSudo ? "/usr/bin/pkexec" : "/usr/bin/sudo"
-
     // Icons for different status: "on," "off," and "error"
     property var icons: ({
         "on": Qt.resolvedUrl("./image/on.png"),
@@ -25,7 +22,7 @@ Item {
     property bool loading: false
 
     // The currently displayed icon
-    property string icon: root.icons[plasmoid.configuration.currentStatus]
+    property string icon: root.icons[plasmoid.configuration.currentStatus ? plasmoid.configuration.currentStatus : "error"]
 
     // Set the icon for the Plasmoid
     Plasmoid.icon: root.icon
@@ -50,8 +47,8 @@ Item {
 
         // Commands to enable or disable conservation mode
         property var cmds: {
-            "on": `echo 1 | ${root.pkexecPath} tee ${plasmoid.configuration.conservationModeConfigFile} 1>/dev/null`,
-            "off": `echo 0 | ${root.pkexecPath} tee ${plasmoid.configuration.conservationModeConfigFile} 1>/dev/null`
+            "on": `echo 1 | ${plasmoid.configuration.elevatedPivilegesTool} tee ${plasmoid.configuration.conservationModeConfigFile} 1>/dev/null`,
+            "off": `echo 0 | ${plasmoid.configuration.elevatedPivilegesTool} tee ${plasmoid.configuration.conservationModeConfigFile} 1>/dev/null`
         }
         command: cmds[status]
     }
