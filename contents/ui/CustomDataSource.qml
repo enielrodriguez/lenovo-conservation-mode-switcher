@@ -1,10 +1,10 @@
 
 import QtQuick 2.15
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.plasma5support as Plasma5Support
 
 // Custom DataSource component that can be used to create various DataSources.
 // It provides flexibility by allowing you to specify the 'command', 'engine', and 'connectedSources' properties.
-PlasmaCore.DataSource {
+Plasma5Support.DataSource {
     // The command to execute (e.g., the executable or script to run).
     property string command: ""
 

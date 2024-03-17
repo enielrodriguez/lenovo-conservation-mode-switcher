@@ -1,11 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
-import org.kde.plasma.components 3.0 as PlasmaComponents3
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.components as PlasmaComponents3
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.plasmoid
 
-Item {
+PlasmoidItem {
     id: root
 
     // Icons for different status: "on," "off," and "error"
@@ -212,10 +212,10 @@ Item {
         }
     }
 
-    Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
+    preferredRepresentation: compactRepresentation
 
-    Plasmoid.compactRepresentation: Item {
-        PlasmaCore.IconItem {
+    compactRepresentation: Item {
+        Kirigami.Icon {
             height: plasmoid.configuration.iconSize
             width: plasmoid.configuration.iconSize
             anchors.centerIn: parent
@@ -228,15 +228,15 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: {
-                    plasmoid.expanded = !plasmoid.expanded
+                    expanded = !expanded
                 }
             }
         }
     }
 
-    Plasmoid.fullRepresentation: Item {
-        Layout.preferredWidth: 400 * PlasmaCore.Units.devicePixelRatio
-        Layout.preferredHeight: 300 * PlasmaCore.Units.devicePixelRatio
+    fullRepresentation: Item {
+        Layout.preferredWidth: 400
+        Layout.preferredHeight: 300
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -279,6 +279,6 @@ Item {
     }
 
     // Tooltip text for the Plasmoid
-    Plasmoid.toolTipMainText: i18n("Switch Conservation Mode.")
-    Plasmoid.toolTipSubText: plasmoid.configuration.isCompatible ? i18n("Conservation Mode is %1.", plasmoid.configuration.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
+    toolTipMainText: i18n("Switch Conservation Mode.")
+    toolTipSubText: plasmoid.configuration.isCompatible ? i18n("Conservation Mode is %1.", plasmoid.configuration.currentStatus.toUpperCase()) : i18n("The conservation mode is not available.")
 }
