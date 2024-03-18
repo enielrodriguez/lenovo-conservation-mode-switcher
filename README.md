@@ -22,10 +22,13 @@ KDE Plasma widget to turn on/off the battery conservation mode in **compatible L
 ### From KDE Store
 You can find it in your software center, in the subcategories `Plasma Addons > Plasma Widgets`.  
 Or you can download or install it directly from the [KDE Store](https://store.kde.org/p/2074337/) website.
+KDE 6 Version [here](https://store.kde.org/p/2138476).
 
 ### Manually
 - Download/clone this repo.
-- Run from a terminal the command `plasmapkg2 -i [widget folder name]`.
+- For KDE 5, run from a terminal the command `plasmapkg2 -i [widget folder name]`.
+- For KDE 6, run from a terminal the command `kpackagetool6 -i [widget folder name]`.
+
 
 ## Disclaimer
 I'm not a widget or KDE developer, I did this by looking at other widgets, using AI chatbots, consulting documentation, etc. So use it at your own risk.
