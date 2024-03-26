@@ -14,7 +14,7 @@
         "Id": "lenovo-conservation-mode-switcher",
         "License": "GPL3",
         "Name": "Lenovo Conservation Mode Switcher",
-        "Version": "1.0.0",
+        "Version": "1.0.1",
         "Website": ""
     },
     "KPackageStructure": "Plasma/Applet",

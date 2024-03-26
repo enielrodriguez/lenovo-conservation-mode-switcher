@@ -212,8 +212,6 @@ PlasmoidItem {
         }
     }
 
-    preferredRepresentation: compactRepresentation
-
     compactRepresentation: Item {
         Kirigami.Icon {
             height: plasmoid.configuration.iconSize
